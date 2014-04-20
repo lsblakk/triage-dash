@@ -1,0 +1,11 @@
+<section data-ng-controller="QueriesController" data-ng-init="find()">
+	<ul class="queries unstyled">
+		<li data-ng-repeat="query in queries">
+			<span>{{query.created | date:'medium'}}</span> /
+			<span>{{query.user.name}}</span>
+			<h2><a data-ng-href="#!/queries/{{query._id}}">{{query.title}}</a></h2>
+			<div>{{query.url}}</div>
+		</li>
+	</ul>
+	<h1 data-ng-hide="!queries || queries.length">No queries yet. <br> Why don't you <a href="/#!/queries/create">Create One</a>?</h1>
+</section>

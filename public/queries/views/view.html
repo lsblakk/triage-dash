@@ -1,0 +1,14 @@
+<section data-ng-controller="QueriesController" data-ng-init="findOne()">
+    <span>{{query.created | date:'medium'}}</span> /
+    <span>{{query.user.name}}</span>
+    <h2>{{query.title}}</h2>
+    <div>{{query.url}}</div>
+    <div data-ng-show="global.user._id == query.user._id">
+        <a class="btn" href="/#!/queries/{{query._id}}/edit">
+            <i class="glyphicon glyphicon-edit"></i>
+        </a>
+        <a class="btn" data-ng-click="remove();">
+            <i class="glyphicon glyphicon-trash"></i>
+        </a>
+    </div>
+</section>
