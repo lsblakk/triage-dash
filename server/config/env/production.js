@@ -3,7 +3,7 @@
 module.exports = {
     db: 'mongodb://lsblakk:​4p4ssw0rd@oceanic.mongohq.com:10015/app24353819',
     app: {
-        name: 'MEAN - A Modern Stack - Production'
+        name: 'Release Management - Tracking Dashboard'
     },
     facebook: {
         clientID: 'APP_ID',

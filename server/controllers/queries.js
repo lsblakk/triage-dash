@@ -8,6 +8,26 @@ var mongoose = require('mongoose'),
     _ = require('lodash');
 
 
+
+/*
+ * YQL for template mapping
+ */
+
+var YQL = require('yql');
+
+function extrapolate(query) {
+    console.log("i'm going to check for version now");
+    new YQL.exec('select * from data.html.cssselect where url="https://wiki.mozilla.org/Template:BETA_VERSION" and css="#mw-content-text p"', function (response) {
+        var $version = response.query.results.results.p;
+        console.log(response.query.results.results.p);
+        query.title = query.title.replace(/{{BETA_VERSION}}/g, $version);
+        query.url = query.url.replace(/{{BETA_VERSION}}/g, $version);
+        return query;
+    });
+}
+
+
+
 /**
  * Find query by id
  */
@@ -16,6 +36,7 @@ exports.query = function(req, res, next, id) {
         if (err) return next(err);
         if (!query) return next(new Error('Failed to load query ' + id));
         req.query = query;
+        // Transform the templates
         next();
     });
 };
@@ -80,8 +101,16 @@ exports.destroy = function(req, res) {
 /**
  * Show a query
  */
+
+ // need to abstract and map out the possible template values
 exports.show = function(req, res) {
-    res.jsonp(req.query);
+    var query = req.query;
+    new YQL.exec('select * from data.html.cssselect where url="https://wiki.mozilla.org/Template:BETA_VERSION" and css="#mw-content-text p"', function (response) {
+        var $version = response.query.results.results.p;
+        query.title = query.title.replace(/{{BETA_VERSION}}/g, $version);
+        query.url = query.url.replace(/{{BETA_VERSION}}/g, $version);
+        res.jsonp(query);
+    });
 };
 
 /**
@@ -98,3 +127,5 @@ exports.all = function(req, res) {
         }
     });
 };
+
+

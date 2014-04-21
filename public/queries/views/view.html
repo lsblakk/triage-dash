@@ -2,7 +2,7 @@
     <span>{{query.created | date:'medium'}}</span> /
     <span>{{query.user.name}}</span>
     <h2>{{query.title}}</h2>
-    <div>{{query.url}}</div>
+    <div><a href="{{query.url}}">Click here for link</a></div>
     <div data-ng-show="global.user._id == query.user._id">
         <a class="btn" href="/#!/queries/{{query._id}}/edit">
             <i class="glyphicon glyphicon-edit"></i>
