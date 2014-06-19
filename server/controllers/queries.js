@@ -7,26 +7,14 @@ var mongoose = require('mongoose'),
     Query = mongoose.model('Query'),
     _ = require('lodash');
 
-
+// Supported Templates for interpolation
+var templates = ['BETA_VERSION', 'AURORA_VERSION'];
+var wikiUrl = "https://wiki.mozilla.org/Template:";
 
 /*
  * YQL for template mapping
  */
-
 var YQL = require('yql');
-
-function extrapolate(query) {
-    console.log("i'm going to check for version now");
-    new YQL.exec('select * from data.html.cssselect where url="https://wiki.mozilla.org/Template:BETA_VERSION" and css="#mw-content-text p"', function (response) {
-        var $version = response.query.results.results.p;
-        console.log(response.query.results.results.p);
-        query.title = query.title.replace(/{{BETA_VERSION}}/g, $version);
-        query.url = query.url.replace(/{{BETA_VERSION}}/g, $version);
-        return query;
-    });
-}
-
-
 
 /**
  * Find query by id
@@ -105,12 +93,30 @@ exports.destroy = function(req, res) {
  // need to abstract and map out the possible template values
 exports.show = function(req, res) {
     var query = req.query;
-    new YQL.exec('select * from data.html.cssselect where url="https://wiki.mozilla.org/Template:BETA_VERSION" and css="#mw-content-text p"', function (response) {
-        var $version = response.query.results.results.p;
-        query.title = query.title.replace(/{{BETA_VERSION}}/g, $version);
-        query.url = query.url.replace(/{{BETA_VERSION}}/g, $version);
-        res.jsonp(query);
-    });
+    console.log("Searching query for any templates");
+    for (var i = templates.length - 1; i >= 0; i--) {
+        if (query.url.search(templates[i]) != -1) {
+            // found
+            var template = templates[i];
+            console.log('found ' + template);
+            var url = wikiUrl + template;
+            console.log(url);
+            var cmd = "select * from data.html.cssselect where url=" + '"' + url + '"' + " and css=" + '"' + "#mw-content-text p" + '"';
+            console.log(cmd);
+            new YQL.exec(cmd, function (response) {
+                console.log(response);
+                var $version = response.query.results.results.p;
+                console.log('Version found: ' + $version);
+                var temp = "{{" + template + "}}";
+                var re = new RegExp(temp, "g");
+                console.log(re);
+                query.url = query.url.replace(re, $version);
+                query.title = query.title.replace(re, $version);
+                res.jsonp(query);
+            });
+        };
+    };
+    
 };
 
 /**

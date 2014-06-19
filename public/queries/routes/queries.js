@@ -29,7 +29,7 @@ angular.module('mean.queries').config(['$stateProvider',
             return deferred.promise;
         };
 
-        // states for my app
+        // states for queries
         $stateProvider
             .state('all queries', {
                 url: '/queries',
